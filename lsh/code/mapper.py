@@ -15,11 +15,12 @@ def minhash(video_id, shingles):
                 signature_vector[i] = hash[shingle]
 
     # b = 15, r = 17
-    for i in range(0, 15):
+    # b = 10, r = 25
+    for i in range(0, 10):
         key = ""
         key = key + str((100 + i))
-        for j in range(0, 18 if i == 14 else 17):
-            key = key + str(signature_vector[17 * i + j])
+        for j in range(0, 31 if i == 9 else 25):
+            key = key + str(signature_vector[25 * i + j])
         print '%s\t%s' % (key, video_id)
 
 if __name__ == "__main__":
