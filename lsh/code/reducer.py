@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import division
 import numpy as np
 import sys
 
@@ -11,8 +12,14 @@ def print_duplicates(videos):
             vid1 = np.fromstring(unique[i][1], dtype=np.int32, sep=" ")
             vid2 = np.fromstring(unique[j][1], dtype=np.int32, sep=" ")
             similarity = len(set(vid1).intersection(vid2)) / len(set(vid1).union(vid2))
+            #print "vid1: ",
+            #print unique[i][0]
+            #print "vid2: ",
+            #print unique[j][0]
+            #print "similarity: ",
+            #print similarity
             if similarity >= 0.85:
-                print "%s\t%s" % (min(unique[i][0], unique[j][0]), max(unique[i][0], unique[j][0]))
+                print "%d\t%d" % (min(int(unique[i][0]), int(unique[j][0])), max(int(unique[i][0]), int(unique[j][0])))
 
 last_key = None
 key_count = 0
