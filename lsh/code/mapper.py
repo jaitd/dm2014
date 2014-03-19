@@ -22,7 +22,7 @@ def minhash(video_id, shingles):
         key = key + str((100 + i))
         for j in range(0, 28 if i == 12 else 19):
             key = key + str(signature_vector[19 * i + j])
-        print '%s\t%s' % (key, video_id)
+        print '%s\t%s' % (key, str(video_id) + "|" + " ".join(str(x) for x in shingles))
 
 if __name__ == "__main__":
     # Very important. Make sure that each machine is using the

@@ -12,23 +12,31 @@ def print_duplicates(videos):
                               max(unique[i], unique[j]))
 
 last_key = None
+last_shingles = None
 key_count = 0
 duplicates = []
 
 for line in sys.stdin:
     line = line.strip()
-    key, video_id = line.split("\t")
+    key, video_details = line.split("\t")
+
+    video_id, shingles_string = video_details.split("|")
+    shingles = np.fromstring(shingles_string, dtype=np.int32, sep=" ")
 
     if last_key is None:
         last_key = key
+        last_shingles = shingles
 
     if key == last_key:
-        duplicates.append(int(video_id))
+        similarity = len(set(shingles).intersection(last_shingles)) / len(set(shingles).union(last_shingles))
+        if similarity > 0.85:
+            duplicates.append(int(video_id))
     else:
         # Key changed (previous line was k=x, this line is k=y)
         print_duplicates(duplicates)
         duplicates = [int(video_id)]
         last_key = key
+        last_shingles = shingles
 
 if len(duplicates) > 0:
     print_duplicates(duplicates)
