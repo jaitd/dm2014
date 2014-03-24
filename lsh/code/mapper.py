@@ -17,11 +17,11 @@ def minhash(video_id, shingles):
     # b = 15, r = 17
     # b = 10, r = 25
     # b = 13, r = 19
-    for i in range(0, 13):
+    for i in range(0, 15):
         key = ""
         key = key + str((100 + i))
-        for j in range(0, 28 if i == 12 else 19):
-            key = key + str(signature_vector[19 * i + j])
+        for j in range(0, 18 if i == 14 else 17):
+            key = key + str(signature_vector[17 * i + j])
         print '%s\t%s' % (key, str(video_id) + "|" + " ".join(str(x) for x in shingles))
 
 if __name__ == "__main__":
