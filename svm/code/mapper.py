@@ -12,10 +12,13 @@ classifier = SGDClassifier()
 
 # batch size for the partial_fit
 BATCH_SIZE = 50
+X_train_batch = np.array([])
+Y_train_batch = np.array([])
+count = 0
 
 
 # appended 1 to the original features for centering the data, the
-# classifier also calculates the offset which is appended to
+# classifier also calculates the intercept which is appended to
 # the weights
 def transform(x_original):
     return np.append(x_original, [1])
@@ -30,7 +33,39 @@ if __name__ == "__main__":
     for line in sys.stdin:
         line = line.strip()
         features = np.fromstring(line, dtype=np.float64, sep=" ")
-        train([features[0]], features[1:])
+
+        # if count is zero then no picture has yet been added to the
+        # batch. add the first picture to the batch and continue
+        if count == 0:
+            X_train_batch = np.append(X_train_batch, [features[1:]])
+            Y_train_batch = np.append(Y_train_batch, features[0])
+            count = count + 1
+            print "Appending to training arrays: ",
+            print str(len(X_train_batch)),
+            print " "
+            print str(len(Y_train_batch))
+            continue
+
+        # when BATCH_SIZE pictures are available then train the
+        # the classifier else keep on adding pictures to the batch
+        if count % BATCH_SIZE != 0:
+            X_train_batch = np.append(X_train_batch, [features[1:]])
+            Y_train_batch = np.append(Y_train_batch, features[0])
+            count = count + 1
+            print "Appending to training arrays: ",
+            print str(len(X_train_batch)),
+            print " "
+            print str(len(Y_train_batch))
+        else:
+            train(Y_train_batch, X_train_batch)
+            Y_train_batch = []
+            X_train_batch = []
+            count = 0
+
+    # to take care of the additional pictures which were greater
+    # than the last batch size
+    if X_train_batch and Y_train_batch:
+        train(Y_train_batch, X_train_batch)
 
     temp = classifier.coef_[0]
     # appending intercept to the calculated weights
@@ -38,4 +73,4 @@ if __name__ == "__main__":
 
     value = ' '.join(str(x) for x in temp)
 
-    print '%s\t%s' % ('1', value)
+    #print '%s\t%s' % ('1', value)
