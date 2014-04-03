@@ -8,7 +8,7 @@ from sklearn.linear_model.stochastic_gradient import SGDClassifier
 
 # one classifier for the mapper
 # this is the classifier on which we'll be running the partial_fit
-classifier = SGDClassifier()
+classifier = SGDClassifier(loss='log')
 
 # batch size for the partial_fit
 BATCH_SIZE = 50
