@@ -35,15 +35,17 @@ if __name__ == "__main__":
 
                 x_original = np.fromstring(x_string, sep=' ')
                 x = transform(x_original).flatten()  # Use our features.
+                #print x.shape
+                #print weights.shape
                 if not x.shape == weights.shape:
                     logging.error("Shapes of weight vector and transformed "
                                   "data don't match")
                     sys.exit(3)
-                if (np.inner(weights, x) < 0):
-                    print -1
-                else:
-                    print 1
-                if label*np.inner(weights, x) >= 0:
+                #if (np.inner(weights, x) < 0):
+                #    print -1
+                #else:
+                #    print 1
+                if label * np.inner(weights, x) >= 0:
 
                     accuracy += 1
                 total += 1

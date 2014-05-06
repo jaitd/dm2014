@@ -6,7 +6,7 @@ from __future__ import division
 import numpy as np
 import sys
 
-final_weights = [0] * 401
+final_weights = [0] * 2001
 count = 0
 
 if __name__ == "__main__":

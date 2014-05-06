@@ -5,10 +5,14 @@ import sys
 import numpy as np
 
 from sklearn.linear_model.stochastic_gradient import SGDClassifier
+from sklearn.kernel_approximation import AdditiveChi2Sampler
 
 # one classifier for the mapper
 # this is the classifier on which we'll be running the partial_fit
-classifier = SGDClassifier(loss='log')
+classifier = SGDClassifier()
+
+# kernel
+kernel = AdditiveChi2Sampler(sample_steps=3)
 
 # batch size for the partial_fit
 BATCH_SIZE = 50
@@ -21,7 +25,8 @@ count = 0
 # classifier also calculates the intercept which is appended to
 # the weights
 def transform(x_original):
-    return np.append(x_original, [1])
+    x_transform = kernel.fit_transform(x_original)
+    return np.append(x_transform, [1])
 
 
 # run paritial_fit for the classifier with each picture
@@ -32,21 +37,22 @@ def train(y, features):
 if __name__ == "__main__":
     for line in sys.stdin:
         line = line.strip()
-        features = np.fromstring(line, dtype=np.float64, sep=" ")
+        data_point = np.fromstring(line, dtype=np.float64, sep=" ")
+        features = data_point[1:]
 
         # if count is zero then no picture has yet been added to the
         # batch. add the first picture to the batch and continue
         if count == 0:
-            X_train_batch = np.array([features[1:]])
-            Y_train_batch = np.array(features[0])
+            X_train_batch = kernel.fit_transform(np.array([features]))
+            Y_train_batch = np.array(data_point[0])
             count = count + 1
             continue
 
         # when BATCH_SIZE pictures are available then train the
         # the classifier else keep on adding pictures to the batch
         if count % BATCH_SIZE != 0:
-            X_train_batch = np.vstack([X_train_batch, [features[1:]]])
-            Y_train_batch = np.append(Y_train_batch, features[0])
+            X_train_batch = np.vstack([X_train_batch, kernel.fit_transform(np.array([features]))])
+            Y_train_batch = np.append(Y_train_batch, data_point[0])
             count = count + 1
         else:
             train(Y_train_batch, X_train_batch)
