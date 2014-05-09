@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from scipy.spatial.distance import euclidean
 
-CLUSTER_SIZE = 200
+CLUSTER_SIZE = 400
 centers = np.random.rand(750)
 counts = np.zeros(CLUSTER_SIZE)
 
@@ -13,7 +13,7 @@ def init_skmeans():
     # init the centers to random data points
     global centers
     for i in range(CLUSTER_SIZE - 1):
-        centers = np.vstack([centers, np.random.uniform(low=-2, high=2, size=750)])
+        centers = np.vstack([centers, np.random.uniform(low=-1, high=1, size=750)])
 
 
 def skmeans(data_point):
@@ -46,4 +46,4 @@ if __name__ == "__main__":
 
     for center in centers:
         val = ' '.join(str(x) for x in center)
-        print '%s\t%s' % ('1', val)
+        print '%s\t%s' % (np.random.randint(5, 100), val)
