@@ -2,21 +2,18 @@
 
 import numpy as np
 import sys
-from scipy.spatial.distance import euclidean
 
 CLUSTER_SIZE = 200
-centers = np.random.rand(750)
+count = 0
+centers = np.array([])
 counts = np.zeros(CLUSTER_SIZE)
 
 
-def init_skmeans():
-    # init the centers to random data points
-    global centers
-    for i in range(CLUSTER_SIZE - 1):
-        centers = np.vstack([centers, np.random.rand(750)])
+def dist(x, y):
+    return np.sum((x - y) ** 2)
 
 
-def skmeans(data_point):
+def skmeans(weight, point):
     # sequential k-means
     global centers, counts
 
@@ -24,24 +21,32 @@ def skmeans(data_point):
     min_distance = float("inf")
 
     for index, center in enumerate(centers):
-        dist = euclidean(data_point, center)
-        if dist < min_distance:
-            min_distance = dist
+        d = weight * dist(point, center)
+        if d < min_distance:
+            min_distance = d
             min_index = index
 
     counts[min_index] = counts[min_index] + 1
 
-    centers[min_index] = centers[min_index] + ((1 / counts[min_index]) * (data_point - centers[min_index]))
+    centers[min_index] = centers[min_index] + \
+        ((1 / counts[min_index]) * (point - centers[min_index]))
 
 if __name__ == "__main__":
-    init_skmeans()
-
     for line in sys.stdin:
         line = line.strip()
         key, data_string = line.split('\t')
-        data_point = np.fromstring(data_string, dtype=np.float64, sep=" ")
+        data = np.fromstring(data_string, dtype=np.float64, sep=" ")
 
-        skmeans(data_point)
+        if count == 0:
+            centers = data[1:]
+            count = count + 1
+            continue
+
+        if count < CLUSTER_SIZE:
+            centers = np.vstack([centers, data[1:]])
+            count = count + 1
+        else:
+            skmeans(data[0], data[1:])
 
     for center in centers:
         value = ' '.join(str(x) for x in center)

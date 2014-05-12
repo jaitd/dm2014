@@ -1,49 +1,62 @@
 #!/usr/bin/env python2.7
 
+from __future__ import division
+
 import sys
 import numpy as np
-from scipy.spatial.distance import euclidean
 
-CLUSTER_SIZE = 200
-centers = np.random.rand(750)
-counts = np.zeros(CLUSTER_SIZE)
-
-
-def init_skmeans():
-    # init the centers to random data points
-    global centers
-    for i in range(CLUSTER_SIZE - 1):
-        centers = np.vstack([centers, np.random.uniform(low=-2, high=2, size=750)])
+BATCH_SIZE = 8000
+count = 0
+batch = np.array([])
+CORESET_SIZE = 2000
 
 
-def skmeans(data_point):
-    # sequential k-means
-    global centers, counts
+def dist(x, y):
+    return np.sum((x - y) ** 2)
 
-    min_index = 0
-    min_distance = float("inf")
 
-    for index, center in enumerate(centers):
-        dist = euclidean(data_point, center)
-        if dist < min_distance:
-            min_distance = dist
-            min_index = index
+def get_coreset(batch):
+    global CORESET_SIZE
 
-    counts[min_index] = counts[min_index] + 1
+    weights = np.zeros(CORESET_SIZE)
+    coreset = batch[np.random.choice(batch.shape[0],
+                                     CORESET_SIZE, replace=False), :]
 
-    centers[min_index] = centers[min_index] + ((1 / counts[min_index]) * (data_point - centers[min_index]))
+    for point in batch:
+        min_index = 4242
+        min_dist = float("inf")
+        for index, c in enumerate(coreset):
+            d = dist(point, c)
+            if d < min_dist:
+                min_dist = d
+                min_index = index
+        weights[min_index] = weights[min_index] + 1
+
+    for weight, point in zip(weights, coreset):
+        value = str(weight) + ' '
+        value = value + ' '.join(str(x) for x in point)
+        print '%s\t%s' % (np.random.randint(100), value)
+
 
 if __name__ == "__main__":
-    # for testing out averaging
-    np.random.seed(seed=42)
-    init_skmeans()
-
     for line in sys.stdin:
+
         line = line.strip()
         data_point = np.fromstring(line, dtype=np.float64, sep=" ")
 
-        skmeans(data_point)
+        if count == 0:
+            batch = data_point
+            count = count + 1
+            continue
 
-    for center in centers:
-        val = ' '.join(str(x) for x in center)
-        print '%s\t%s' % ('1', val)
+        if count < BATCH_SIZE:
+            batch = np.vstack([batch, data_point])
+            count = count + 1
+        else:
+            get_coreset(batch)
+            count = 0
+            batch = np.array([])
+
+    if count != 0:
+        CORESET_SIZE = int(count * 0.25)
+        get_coreset(batch)
