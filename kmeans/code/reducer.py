@@ -38,15 +38,18 @@ if __name__ == "__main__":
         data = np.fromstring(data_string, dtype=np.float64, sep=" ")
 
         if count == 0:
-            centers = data[1:]
+            #centers = data[1:]
+            centers = data
             count = count + 1
             continue
 
         if count < CLUSTER_SIZE:
-            centers = np.vstack([centers, data[1:]])
+            #centers = np.vstack([centers, data[1:]])
+            centers = np.vstack([centers, data])
             count = count + 1
         else:
-            skmeans(data[0], data[1:])
+            #skmeans(data[0], data[1:])
+            skmeans(np.float64(key[1:]), data)
 
     for center in centers:
         value = ' '.join(str(x) for x in center)
