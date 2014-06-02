@@ -37,7 +37,7 @@ def update(reward):
         return
 
     articles_A[last_returned] = articles_A[last_returned] + \
-        last_user_feature.dot(last_user_feature.T)
+        np.dot(last_user_feature, last_user_feature.T)
     articles_A_inv[last_returned] = linalg.inv(articles_A[last_returned])
 
     articles_b[last_returned] = articles_b[last_returned] + \
@@ -51,18 +51,20 @@ def reccomend(timestamp, user_features, art):
     global last_returned, last_user_feature
 
     p_ta = {}
-    user_features = np.array([user_features]).T
+    user_features = np.array(user_features).T
 
     for article in art:
         if not article in articles_A:
             articles_A[article] = np.identity(6)
             articles_A_inv[article] = np.identity(6)
-            articles_b[article] = np.array([np.zeros(6)]).T
+            articles_b[article] = np.array(np.zeros(6)).T
 
-        theta_hat = articles_A_inv[article].dot(articles_b[article])
+        theta_hat = np.inner(articles_A_inv[article], articles_b[article])
 
-        p_ta[article] = theta_hat.T.dot(user_features) + alpha * \
-            math.sqrt(user_features.T.dot(articles_A_inv[article]).dot(user_features)[0][0])
+        p_ta[article] = np.inner(theta_hat.T, user_features) + alpha * \
+            math.sqrt(np.inner(user_features.T,
+                               np.inner(articles_A_inv[article],
+                                        user_features)))
 
     last_user_feature = user_features
     last_returned = max(p_ta.iteritems(), key=operator.itemgetter(1))[0]
