@@ -25,14 +25,22 @@
 
 \section{Approximate near-duplicate search using Locality Sensitive Hashing} 
 
+We used the numpy python library for this project. For the mapper we consider each space delimited number as a shingle. Since we had to generate a maximum of 256 hash functions, we use the function randint() to generate random integers for our hash functions. We save them all in a vector and we define a signature vector to the biggest integer value possible.
+
+We then implement the minhash algorithm using bandwidth=15 with each 17 rows (except the last one with 16 rows) and then we eventually calculate a key for each video. We send to the reducer the key and respective video details.
+
+In the reducer part we calculate the Jaccard similarity between the two video and see if its more than 85 percent similar, and output it to the file separated by a tab.
+
+
 
 \section{Large-Scale Image Classification}
-Maximum of 2 pages per section.
+
+We used numpy and scikit learn python libraries for this project. In the mapper we used SGD classifier to run a partial fit on a batch of 50 rows of data at a time. No transformation is done. The calculated weights including the intercept are sent to the reducer that adds them up and normalizes them in order to obtain the actual weights for this model.
 
 \section{Extracting Representative Elements From Large Datasets}
-Maximum of 2 pages per section.
+
 
 \section{Explore-Exploit Tradeoffs in Recommender Systems}
-Maximum of 2 pages per section.
+
 
 \end{document} 
