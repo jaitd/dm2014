@@ -29,7 +29,7 @@ We used the numpy python library for this project. For the mapper we consider ea
 
 We then implement the minhash algorithm using bandwidth=15 with each 17 rows (except the last one with 16 rows) and then we eventually calculate a key for each video. We send to the reducer the key and respective video details.
 
-In the reducer part we calculate the Jaccard similarity between the two video and see if its more than 85 percent similar, and output it to the file separated by a tab.
+In the reducer part we calculate the Jaccard similarity between videos which have the same keys and see if its more than 85 percent similar, and output it to the file separated by a tab.
 
 
 
