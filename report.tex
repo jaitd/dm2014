@@ -1,6 +1,7 @@
 \documentclass[a4paper, 11pt]{article}
 \usepackage{graphicx}
-\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{mathtools}
 \usepackage[pdftex]{hyperref}
 
 \setlength{\textwidth}{16.5cm}
@@ -25,22 +26,39 @@
 
 \section{Approximate near-duplicate search using Locality Sensitive Hashing} 
 
-We used the numpy python library for this project. For the mapper we consider each space delimited number as a shingle. Since we had to generate a maximum of 256 hash functions, we use the function randint() to generate random integers for our hash functions. We save them all in a vector and we define a signature vector to the biggest integer value possible.
+We used the numpy python library for this project. For the mapper we consider each space delimited number as a shingle. Since we had to generate a maximum
+of 256 hash functions, we use the function randint() to generate random integers for our hash functions. We save them all in a vector and we define a signature
+vector to the biggest integer value possible.
 
-We then implement the minhash algorithm using bandwidth=15 with each 17 rows (except the last one with 16 rows) and then we eventually calculate a key for each video. We send to the reducer the key and respective video details.
+We then implement the minhash algorithm using bandwidth=15 with each 17 rows (except the last one with 16 rows) and then we eventually calculate a key for
+each video. We send to the reducer the key and respective video details.
 
-In the reducer part we calculate the Jaccard similarity between videos which have the same keys and see if its more than 85 percent similar, and output it to the file separated by a tab.
-
-
+In the reducer part we calculate the Jaccard similarity between videos which have the same keys and see if its more than 85 percent similar, and output
+it to the file separated by a tab.
 
 \section{Large-Scale Image Classification}
 
-We used numpy and scikit learn python libraries for this project. In the mapper we used SGD classifier to run a partial fit on a batch of 50 rows of data at a time. No transformation is done. The calculated weights including the intercept are sent to the reducer that adds them up and normalizes them in order to obtain the actual weights for this model.
+We used numpy and scikit learn python libraries for this project. In the mapper we used SGD classifier to run a partial fit on a batch of 50 rows of data
+at a time. No transformation is done. The calculated weights including the intercept are sent to the reducer that adds them up and normalizes them in order
+to obtain the actual weights for this model.
 
 \section{Extracting Representative Elements From Large Datasets}
 
 
 \section{Explore-Exploit Tradeoffs in Recommender Systems}
 
+Our implementation followed the original Li et al 2010 paper. We used the LinUCB with disjoint linear models of the two algorithms presented in the paper.
+We had to implement two functions as a part of this project - \lstinline{recommend} and \lstinline{update}. We adapted the code pseudo-code presented in the
+paper to the these two methods. \lstinline{recommend} would be called by judge, which would return an article. The feedback from the payoff would be recorded
+by the \lstinline{update} method.
 
-\end{document} 
+We used \lstinline{numpy} arrays to store all the features and matrices. We made a dictionary to store the design matrices for each article and also stored
+the matrix inverse for this matrices in a separate dictionary to speed things up. We set $\alpha$ to 0.2 as the paper showed that it was the best value for LinUCB.
+Another major decision that we made was to ignore the payoff when it was -1, which means that our selected article didn't match with the one served by
+Yahoo. The motivation behind this was that as we know the article was not shown, we cannot know if the article was clicked or not, and hence cannot determine
+the payoff.
+
+With these settings we got a CTR of 0.059306, we tried a lot of variations but we couldn't get past the hard baseline. Our assumption is that there is still
+some bug in our implementation that we couldn't find which was bringing down the CTR.
+
+\end{document}
