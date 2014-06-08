@@ -45,7 +45,7 @@ we assign them random initial clusters. On those points we create coresets and i
 
 in a batch we initilize the minimum index to 4242 and minimum distance to infinity and we try to calculate the weight of each coreset
 
-and send them both to the reducer. In the reducer we use these coresets theselves as points and recluster them using online k means and coreset weights.The number of clusters
+and send them both to the reducer. In the reducer we use these coresets theselves as points and recluster them using online k means and coreset weights.The final number of clusters
 
 used here is 200.
 
