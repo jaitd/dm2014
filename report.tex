@@ -39,6 +39,15 @@ We used numpy and scikit learn python libraries for this project. In the mapper 
 
 \section{Extracting Representative Elements From Large Datasets}
 
+For this project we used the numpy python library. In the mapper we get a set of 8000 at a time to form coresets. Once we get those
+
+we assign them random initial clusters. On those points we create coresets and initialize their weights to zero. For every point
+
+in a batch we initilize the minimum index to 4242 and minimum distance to infinity and we try to calculate the weight of each coreset
+
+and send them both to the reducer. In the reducer we use these coresets theselves as points and recluster them using online k means and coreset weights.The number of clusters
+
+used here is 200.
 
 \section{Explore-Exploit Tradeoffs in Recommender Systems}
 
