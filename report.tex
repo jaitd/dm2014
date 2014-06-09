@@ -39,7 +39,8 @@ it to the file separated by a tab.
 \section{Large-Scale Image Classification}
 
 We used numpy and scikit learn python libraries for this project. In the mapper we used SGD classifier to run a partial fit on a batch of 50 rows of data
-at a time. No transformation is done. The calculated weights including the intercept are sent to the reducer that adds them up and normalizes them in order
+at a time. The kernel used for transformation is the Additive Chi squared kernel with parameter n=3, and the loss function used here
+is the hinge loss function (which means this is an SVM classification). The calculated weights including the intercept are sent to the reducer that adds them up and normalizes them in order
 to obtain the actual weights for this model.
 
 \section{Extracting Representative Elements From Large Datasets}
